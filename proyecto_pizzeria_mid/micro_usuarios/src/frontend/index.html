@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pizzería El Salami del Italiano - Autenticación</title>
+</head>
+<body>
+  
+  <h1>Gestión de usuarios</h1>
+
+  <h2>Registro</h2>
+  <form id="registerForm">
+    <input type="text" id="regNombre" placeholder="Nombre" required><br>
+    <input type="email" id="regEmail" placeholder="Email" required><br>
+    <input type="text" id="regTelefono" placeholder="Teléfono"><br>
+    <select id="regRol" required>
+      <option value="" disabled selected>Selecciona un rol</option>
+  <option value="Admin">Admin</option>
+  <option value="Cocina">Cocina</option>
+  <option value="Cajero">Cajero</option>
+  <option value="Domiciliario">Domiciliario</option>
+    </select><br>
+    <input type="password" id="regPassword" placeholder="Contraseña" required><br>
+    <button type="submit">Registrar</button>
+  </form>
+
+  <h2>Login</h2>
+  <form id="loginForm">
+    <input type="email" id="logEmail" placeholder="Email" required><br>
+    <input type="password" id="logPassword" placeholder="Contraseña" required><br>
+    <button type="submit">Iniciar sesión</button>
+  </form>
+
+  <h3 id="resultado"></h3>
+
+  <script src="app.js"></script>
+</body>
+</html>

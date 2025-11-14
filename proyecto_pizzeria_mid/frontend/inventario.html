@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Salami del Italiano - Inventario (Admin)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --verde-italia: #228B22;
+            --blanco-italia: #FFFFFF;
+            --rojo-italia: #DC143C;
+            --negro: #000000;
+            --gris-oscuro: #333333;
+            --gris-medio: #666666;
+            --gris-claro: #F5F5F5;
+            --dorado: #FFD700;
+            --beige: #F5DEB3;
+        }
+        body { background: var(--beige); font-family: 'Open Sans', sans-serif; }
+        .header-pizzeria { background: var(--negro); color: var(--blanco-italia); padding: 1rem 0; position: relative; }
+        .header-pizzeria::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, var(--verde-italia) 33%, var(--blanco-italia) 33%, var(--blanco-italia) 66%, var(--rojo-italia) 66%); }
+        .logo-container { display: flex; align-items: center; justify-content: center; gap: 1rem; }
+        .pizza-icon { font-size: 2rem; color: var(--dorado); }
+        .restaurant-name { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 900; }
+        .main-container { background: var(--blanco-italia); border-radius: 12px; border: 2px solid var(--negro); margin: 2rem auto; max-width: 980px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,.15); }
+        .section-header { background: var(--negro); color: var(--blanco-italia); padding: 1rem 1.5rem; border-bottom: 2px solid var(--dorado); }
+        .section-title { font-family: 'Playfair Display', serif; margin: 0; letter-spacing: 1px; }
+        .content { padding: 1.5rem; }
+        .btn-italiano { background: var(--rojo-italia); color: var(--blanco-italia); border: 2px solid var(--negro); border-radius: 8px; }
+        .card { border-radius: 10px; border: 1px solid var(--gris-claro); }
+        pre { background: #111; color: #eee; padding: 1rem; border-radius: 8px; max-height: 300px; overflow: auto; }
+    </style>
+    <script>
+        // Redirección temprana si no es Admin
+        (function guard() {
+            const rol = localStorage.getItem('userRol');
+            const token = localStorage.getItem('token');
+            if (!token || rol !== 'Admin') {
+                window.location.href = 'index.html';
+            }
+        })();
+    </script>
+    <script>
+        // Evitar parpadeo: ocultar hasta validar
+        document.documentElement.style.visibility = 'hidden';
+    </script>
+</head>
+<body>
+    <header class="header-pizzeria">
+        <div class="container">
+            <div class="logo-container">
+                <i class="bi bi-pizza pizza-icon"></i>
+                <div>
+                    <div class="restaurant-name">El Salami del Italiano</div>
+                <div style="font-size:.9rem; color: var(--dorado); font-weight:700">Panel de Inventario (Solo Admin)</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-container">
+            <div class="section-header d-flex justify-content-between align-items-center">
+                <h1 class="section-title h4 mb-0">Inventario</h1>
+                <div>
+                    <button id="btnSalir" class="btn btn-sm btn-outline-light me-2"><i class="bi bi-box-arrow-right me-1"></i>Salir</button>
+                    <button id="btnInicio" class="btn btn-sm btn-warning"><i class="bi bi-house-door me-1"></i>Inicio</button>
+                </div>
+            </div>
+            <div class="content">
+                    <div class="row g-3 mb-3">
+                    <div class="col-12 col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                  <h5 class="card-title mb-0">Ingredientes</h5>
+                                  <button id="btnNuevoIngrediente" class="btn btn-sm btn-success"><i class="bi bi-plus-circle me-1"></i>Nuevo</button>
+                                </div>
+                                <p class="card-text">Gestión de ingredientes.</p>
+                                <div class="d-grid gap-2">
+                                  <button id="btnIngredientes" class="btn btn-italiano"><i class="bi bi-list-ul me-2"></i>Ver ingredientes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Stock bajo</h5>
+                                <p class="card-text">Ingredientes con bajo umbral.</p>
+                                <button id="btnStockBajo" class="btn btn-italiano w-100"><i class="bi bi-exclamation-triangle me-2"></i>Ver alertas</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Recetas</h5>
+                                <p class="card-text">Gestión de recetas.</p>
+                                <div class="d-grid gap-2">
+                                  <button id="btnRecetas" class="btn btn-italiano"><i class="bi bi-card-list me-2"></i>Ver recetas</button>
+                                  <button id="btnNuevaReceta" class="btn btn-success"><i class="bi bi-plus-circle me-2"></i>Nueva receta</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3 d-flex align-items-center justify-content-between">
+                    <h6 class="mb-0">Visor</h6>
+                    <span class="badge text-bg-dark" id="badgeInfo">Listo</span>
+                </div>
+                <div id="alerts" class="mb-3"></div>
+                <div id="view"></div>
+
+                <!-- Sección de Usuarios debajo del visor -->
+                <div class="mt-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between">
+                    <h6 class="mb-2 mb-md-0">Usuarios</h6>
+                    <div class="d-grid d-md-flex gap-2">
+                        <button id="btnUsuarios" class="btn btn-italiano"><i class="bi bi-people me-2"></i>Ver usuarios</button>
+                        <button id="btnNuevoUsuario" class="btn btn-success"><i class="bi bi-plus-circle me-2"></i>Nuevo usuario</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Crear/Editar Ingrediente -->
+    <div class="modal fade" id="ingredienteModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="ingredienteModalTitle">Nuevo ingrediente</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="ingredienteForm">
+              <input type="hidden" id="ingId">
+              <div class="mb-3">
+                <label class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="ingNombre" required>
+              </div>
+              <div class="row g-2">
+                <div class="col-6 mb-3">
+                  <label class="form-label">Unidad de medida</label>
+                  <input type="text" class="form-control" id="ingUnidad" placeholder="kg, lt, und" required>
+                </div>
+                <div class="col-6 mb-3">
+                  <label class="form-label">Costo unitario</label>
+                  <input type="number" step="0.01" min="0" class="form-control" id="ingCosto" required>
+                </div>
+              </div>
+              <div class="row g-2">
+                <div class="col-6 mb-3">
+                  <label class="form-label">Vida útil (días)</label>
+                  <input type="number" min="1" class="form-control" id="ingVidaUtil" required>
+                </div>
+                <div class="col-6 mb-3">
+                  <label class="form-label">Proveedor (opcional)</label>
+                  <input type="text" class="form-control" id="ingProveedor">
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Alérgenos (opcional)</label>
+                <input type="text" class="form-control" id="ingAlergenos" placeholder="Lácteos, gluten, ...">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" id="guardarIngredienteBtn"><i class="bi bi-check2 me-1"></i>Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Crear/Editar Usuario -->
+    <div class="modal fade" id="usuarioModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="usuarioModalTitle">Nuevo usuario</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="usuarioForm">
+              <input type="hidden" id="userId">
+              <div class="mb-3">
+                <label class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="userNombre" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Correo electrónico</label>
+                <input type="email" class="form-control" id="userEmail" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Teléfono</label>
+                <input type="text" class="form-control" id="userTelefono" required>
+              </div>
+              <div class="row g-2">
+                <div class="col-6 mb-3">
+                  <label class="form-label">Rol</label>
+                  <select class="form-select" id="userRol" required>
+                    <option value="">Seleccionar...</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Cocina">Cocina</option>
+                    <option value="Cajero">Cajero</option>
+                    <option value="Domiciliario">Domiciliario</option>
+                  </select>
+                </div>
+                <div class="col-6 mb-3">
+                  <label class="form-label">Estado</label>
+                  <select class="form-select" id="userEstado" required>
+                    <option value="">Seleccionar...</option>
+                    <option value="activo">Activo</option>
+                    <option value="inactivo">Inactivo</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mb-3" id="passwordSection">
+                <label class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="userPassword" required>
+                <div class="form-text">Mínimo 6 caracteres</div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" id="guardarUsuarioBtn"><i class="bi bi-check2 me-1"></i>Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Crear/Editar Receta -->
+    <div class="modal fade" id="recetaModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="recetaModalTitle">Nueva receta</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="recetaForm">
+              <input type="hidden" id="recetaId">
+              <div class="row g-2">
+                <div class="col-12 col-md-6 mb-3">
+                  <label class="form-label">Nombre</label>
+                  <input type="text" class="form-control" id="recNombre" required>
+                </div>
+                <div class="col-12 col-md-6 mb-3">
+                  <label class="form-label">Tipo de pizza</label>
+                  <input type="text" class="form-control" id="recTipo" placeholder="Ej: Margarita" required>
+                </div>
+              </div>
+              <div class="row g-2">
+                <div class="col-12 col-md-4 mb-3">
+                  <label class="form-label">Tamaño</label>
+                  <select class="form-select" id="recTamano" required>
+                    <option value="">Seleccionar...</option>
+                    <option value="PEQUEÑA">PEQUEÑA</option>
+                    <option value="MEDIANA">MEDIANA</option>
+                    <option value="GRANDE">GRANDE</option>
+                    <option value="FAMILIAR">FAMILIAR</option>
+                  </select>
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                  <label class="form-label">Precio base</label>
+                  <input type="number" step="0.01" min="0" class="form-control" id="recPrecio" required>
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                  <label class="form-label">Tolerancia de merma (%)</label>
+                  <input type="number" step="0.01" min="0" max="100" class="form-control" id="recMerma" value="5.00">
+                </div>
+              </div>
+
+              <hr>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="mb-0">Ingredientes</h6>
+                <button type="button" class="btn btn-sm btn-success" id="btnAgregarIngReceta">
+                  <i class="bi bi-plus-circle me-1"></i>Añadir ingrediente
+                </button>
+              </div>
+              <div id="recetaIngredientesContainer"></div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" id="guardarRecetaBtn"><i class="bi bi-check2 me-1"></i>Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="inventario.js"></script>
+</body>
+</html>
+
+

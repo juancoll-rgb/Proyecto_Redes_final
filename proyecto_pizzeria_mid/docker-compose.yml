@@ -1,0 +1,97 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql_pizzeria
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+      - ./sql_init:/docker-entrypoint-initdb.d
+
+  usuarios:
+    build:
+      context: ./micro_usuarios
+      dockerfile: Dockerfile
+    container_name: ms_usuarios
+    ports:
+      - "3000:3000"
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: micro_usuarios
+
+  domicilios:
+    build:
+      context: ./micro_domicilios
+      dockerfile: Dockerfile
+    container_name: ms_domicilios
+    ports:
+      - "3004:3004"
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: micro_domicilio
+
+  ordenes:
+    build:
+      context: ./micro_ordenes
+      dockerfile: Dockerfile
+    container_name: ms_ordenes
+    ports:
+      - "3003:3003"
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: micro_ordenes
+
+  inventario:
+    build:
+      context: ./micro_inventario
+      dockerfile: Dockerfile
+    container_name: ms_inventario
+    ports:
+      - "3001:3001"
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: micro_inventario
+
+  proveedores:
+    build:
+      context: ./micro_proveedores
+      dockerfile: Dockerfile
+    container_name: ms_proveedores
+    ports:
+      - "3002:3002"
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: capasProveedores
+
+
+
